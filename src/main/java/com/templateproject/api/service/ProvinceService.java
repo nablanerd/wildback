@@ -1,5 +1,6 @@
 package com.templateproject.api.service;
 
+import org.hibernate.resource.jdbc.ResourceRegistry;
 import org.springframework.stereotype.Service;
 
 import com.templateproject.api.entity.Player;
@@ -7,6 +8,7 @@ import com.templateproject.api.entity.Province;
 import com.templateproject.api.entity.Resource;
 import com.templateproject.api.repository.PlayerRepository;
 import com.templateproject.api.repository.ProvinceRepository;
+import com.templateproject.api.repository.ResourceRepository;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,13 +23,15 @@ import java.util.stream.Collectors;
 public class ProvinceService {
     private final ProvinceRepository provinceRepository;
     private final PlayerRepository playerRepository;
+    private final ResourceRepository resourceRepository;
     
     
     private final static int DEFAULT_POPULATION = 20;
 
-    public ProvinceService(ProvinceRepository provinceRepository, PlayerRepository playerRepository) {
+    public ProvinceService(ProvinceRepository provinceRepository, PlayerRepository playerRepository,ResourceRepository resourceRepository) {
         this.provinceRepository = provinceRepository;
         this.playerRepository = playerRepository;
+        this.resourceRepository = resourceRepository;
     }
 
     

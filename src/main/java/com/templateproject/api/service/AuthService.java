@@ -21,10 +21,18 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 public class AuthService {
 	private List<Token> tokens;
 
-    private final PlayerRepository userRepository;
-
-    AuthService(PlayerRepository userRepository) {
-        this.userRepository = userRepository;
+    private final PlayerRepository playerRepository;
+    private final ProvinceService provinceService;
+    private final ResourceService resourceService;
+   
+    AuthService(PlayerRepository playerRepository,
+    		ProvinceService provinceService,
+    		ResourceService resourceService
+    		) {
+        /*this.userRepository = userRepository;*/
+        this.provinceService = provinceService;
+        this.resourceService = resourceService;
+        this.playerRepository = playerRepository;
         tokens = new ArrayList<>();
     }
 
@@ -36,7 +44,7 @@ public class AuthService {
             player.setUsername(login);
             player.setEmail(email);
             player.setPassword(passwordHashed);
-            player = userRepository.save(player);
+            player = playerRepository.save(player);
             return player.getId();
         } else {
             throw new Exception("Invalid params"); //TODO specific Exception
@@ -56,7 +64,7 @@ public class AuthService {
 //    }
     
     public String login(String login, String password) {
-        Player dbUser = userRepository.findByUsername(login);
+        Player dbUser = playerRepository.findByUsername(login);
         if (dbUser != null) {
             var result = BCrypt.verifyer().verify(password.toCharArray(), dbUser.getPassword());
             if (result.verified) {
@@ -82,7 +90,7 @@ public class AuthService {
 
 
     public Map<String, String> playerInfo(Integer playerID) throws Exception {
-        Player player = userRepository.findById(playerID).get();
+        Player player = playerRepository.findById(playerID).get();
         var playerInfo = new HashMap<String, String>();
         playerInfo.put("login", player.getUsername());
         playerInfo.put("email", player.getEmail());
@@ -98,15 +106,33 @@ public class AuthService {
         }
     }
     
-//  public Map<String, String> playerInfo(String token) throws Exception {
-//  var userID = findPlayerIdByToken(token);
-//  if (userID == null) {
-//      throw new Exception("Invalid TOKEN");
-//  }
-//  var user = userRepository.findById(userID).get();
-//  var userInfo = new HashMap<String, String>();
-//  userInfo.put("login", user.getUsername());
-//  userInfo.put("email", user.getEmail());
-//  return userInfo;
-//}
+  public Map<String, String> playerInfo(String token) throws Exception {
+  var playerID = findPlayerIdByToken(token);
+  var playerInfo = new HashMap<String, String>();
+  var provinceInfo = provinceService.getProvinceByPlayerId(playerID).get(0);
+  Integer provinceID = (provinceService.getProvinceByPlayerId(playerID).get(0)).getId();
+  var sourceInfo = resourceService.getResourceByProvinceId(provinceID);
+  if (playerID == null) {
+      throw new Exception("Invalid TOKEN");
+  }
+	  try {
+		var player = playerRepository.findById(playerID).get();
+		 
+		 playerInfo.put("login", player.getUsername());
+		 playerInfo.put("email", player.getEmail());
+		 playerInfo.put("provinceName", provinceInfo.getName());
+		 playerInfo.put("provincePopulation", Integer.toString(provinceInfo.getPopulation()));
+		 int wood = (sourceInfo.get(0)).getWood();
+		 playerInfo.put("wood", (Integer.toString(wood)));
+		 int water = (sourceInfo.get(0)).getWater();
+		 playerInfo.put("water", (Integer.toString(water)));
+		 int food = (sourceInfo.get(0)).getFood();
+		 playerInfo.put("food", (Integer.toString(food)));
+		 
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	  return playerInfo;
+  }
 }

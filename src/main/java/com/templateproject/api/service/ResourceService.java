@@ -3,6 +3,7 @@ package com.templateproject.api.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.hibernate.resource.jdbc.ResourceRegistry;
 import org.springframework.stereotype.Service;
 
 import com.templateproject.api.entity.Province;
@@ -75,5 +76,11 @@ public class ResourceService {
         }
         resourceRepository.save(resource);
 
+    }
+    
+    
+    public List<Resource> getResourceByProvinceId(Integer provinceID ) {
+    	List<Resource> resourcess = resourceRepository.findByProvince( provinceRepository.findById(provinceID).get());
+    	return resourcess;
     }
 }

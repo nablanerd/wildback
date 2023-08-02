@@ -134,7 +134,11 @@ public class AuthController {
         var token = headers.get("x-token").get(0);
         authService.logout(token);
         payload.setMessage("player logout");
-        return new ResponseEntity<>(payload, HttpStatus.OK);
+
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.add("Location", "/login");
+
+        return new ResponseEntity<>(payload, HttpStatus.SEE_OTHER);
 
     }
     

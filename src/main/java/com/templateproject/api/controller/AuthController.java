@@ -128,6 +128,8 @@ public class AuthController {
          }
     }
 
+
+  /*   Dans le composant qui déclanche le logout: Après avoir reçu la réponse positive du backend indiquant que l'utilisateur a été déconnecté, il faut naviguer vers la page login avec le  routeur Angular. */
     @GetMapping("/logout")
     public ResponseEntity<Payload> logout(@RequestHeader HttpHeaders headers) {
         var payload = new Payload();
@@ -139,7 +141,6 @@ public class AuthController {
         responseHeaders.add("Location", "/login");
 
         return new ResponseEntity<>(payload, HttpStatus.SEE_OTHER);
-
     }
     
 //  @GetMapping("/info")

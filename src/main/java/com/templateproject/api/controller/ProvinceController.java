@@ -22,12 +22,14 @@ import com.templateproject.api.entity.Province;
 import com.templateproject.api.service.AuthService;
 import com.templateproject.api.service.ProvinceService;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 /**
  * *
  * @author smaile
  *
  */
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 public class ProvinceController {
     private final ProvinceService provinceService;

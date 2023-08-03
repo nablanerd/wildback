@@ -123,15 +123,23 @@ public class AuthController {
 //         }
 //    }
 
+
     //@CrossOrigin(origins = "http://localhost:4200")
+
+
+  /*   Dans le composant qui déclanche le logout: Après avoir reçu la réponse positive du backend indiquant que l'utilisateur a été déconnecté, il faut naviguer vers la page login avec le  routeur Angular. */
+
     @GetMapping("/logout")
     public ResponseEntity<Payload> logout(@RequestHeader HttpHeaders headers) {
         var payload = new Payload();
         String token = headers.get("x-token").get(0);
         authService.logout(token);
         payload.setMessage("player logout");
-        return new ResponseEntity<>(payload, HttpStatus.OK);
 
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.add("Location", "/login");
+
+        return new ResponseEntity<>(payload, HttpStatus.SEE_OTHER);
     }
     
   @GetMapping("/info")

@@ -13,14 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.templateproject.api.repository.PlayerRepository;
 import com.templateproject.api.service.AuthService;
-import com.templateproject.api.service.PlayerService;
 import com.templateproject.api.service.ProvinceService;
 import com.templateproject.api.service.ResourceService;
-
-import jakarta.servlet.http.HttpServletRequest;
-
 import com.templateproject.api.controller.payload.*;
 
 /**
@@ -44,23 +39,23 @@ public class AuthController {
         this.resourceservice = resourceservice;
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<Payload> register(@RequestBody PlayerRegister player) {
-        var payload = new Payload();
-        try {
-            int idPlyer = authService.register(
-            		player.getUsername(),
-            		player.getEmail(),
-            		player.getPassword(),
-            		player.getCpassword()
-            );
-            payload.setMessage("PLayer '" + player.getUsername() + "' registered");
-            return new ResponseEntity(payload, HttpStatus.CREATED);
-        } catch (Exception e) {
-            payload.setMessage(e.getMessage());
-            return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
-        }
-    }
+//    @PostMapping("/register")
+//    public ResponseEntity<Payload> register(@RequestBody PlayerRegister player) {
+//        var payload = new Payload();
+//        try {
+//            int idPlyer = authService.register(
+//            		player.getUsername(),
+//            		player.getEmail(),
+//            		player.getPassword(),
+//            		player.getCpassword()
+//            );
+//            payload.setMessage("PLayer '" + player.getUsername() + "' registered");
+//            return new ResponseEntity(payload, HttpStatus.CREATED);
+//        } catch (Exception e) {
+//            payload.setMessage(e.getMessage());
+//            return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
+//        }
+//    }
     @PostMapping("/register2")
     public ResponseEntity<Payload> register2(@RequestBody PlayerRegister2 player) {
         var payload = new Payload();
@@ -76,7 +71,7 @@ public class AuthController {
             System.out.println("PROVINCE ID : " + provinceID);
             resourceservice.add(provinceID);
             payload.setMessage("PLayer '" + player.getUsername() + "' registered");	
-          
+   
             return new ResponseEntity<Payload>(payload, HttpStatus.CREATED);
         } catch (Exception e) {
             payload.setMessage(e.getMessage());
@@ -111,46 +106,56 @@ public class AuthController {
     }
 
 
-    @GetMapping("/info")
-    public ResponseEntity<Payload> info(@RequestHeader HttpHeaders header, HttpServletRequest request) {
-    	 String token = header.get("x-token").get(0);
-    	 var payload = new Payload();
-         var playerID = (Integer) request.getAttribute("playerID");
-         try {
-        	 System.out.println("PLAYER ID : " + playerID);
-             var playerInfo = authService.playerInfo(playerID);
-             payload.setMessage("Player informations");
-             payload.setData(playerInfo);
-             return new ResponseEntity<>(payload, HttpStatus.OK);
-         } catch (Exception e) {
-             payload.setMessage(e.getMessage());
-             return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
-         }
-    }
+//    @GetMapping("/info")
+//    public ResponseEntity<Payload> info(@RequestHeader HttpHeaders header, HttpServletRequest request) {
+//    	 String token = header.get("x-token").get(0);
+//    	 var payload = new Payload();
+//         var playerID = (Integer) request.getAttribute("playerID");
+//         try {
+//        	 System.out.println("PLAYER ID : " + playerID);
+//             var playerInfo = authService.playerInfo(playerID);
+//             payload.setMessage("Player informations");
+//             payload.setData(playerInfo);
+//             return new ResponseEntity<>(payload, HttpStatus.OK);
+//         } catch (Exception e) {
+//             payload.setMessage(e.getMessage());
+//             return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
+//         }
+//    }
+
+
+    //@CrossOrigin(origins = "http://localhost:4200")
+
+
+  /*   Dans le composant qui déclanche le logout: Après avoir reçu la réponse positive du backend indiquant que l'utilisateur a été déconnecté, il faut naviguer vers la page login avec le  routeur Angular. */
 
     @GetMapping("/logout")
     public ResponseEntity<Payload> logout(@RequestHeader HttpHeaders headers) {
         var payload = new Payload();
-        var token = headers.get("x-token").get(0);
+        String token = headers.get("x-token").get(0);
         authService.logout(token);
         payload.setMessage("player logout");
-        return new ResponseEntity<>(payload, HttpStatus.OK);
 
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.add("Location", "/login");
+
+        return new ResponseEntity<>(payload, HttpStatus.SEE_OTHER);
     }
     
-//  @GetMapping("/info")
-//  public ResponseEntity<Payload> info(@RequestHeader HttpHeaders headers) {
-//      var payload = new Payload();
-//      var token = headers.get("x-token").get(0);
-//      try {
-//          var playerInfo = authService.userInfo(token);
-//          payload.setMessage("player informations");
-//          payload.setData(playerInfo);
-//          return new ResponseEntity<>(payload, HttpStatus.OK);
-//      } catch (Exception e) {
-//          payload.setMessage(e.getMessage());
-//          return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
-//      }
-//  }
+  @GetMapping("/info")
+  public ResponseEntity<Payload> info(@RequestHeader HttpHeaders headers) {
+      var payload = new Payload();
+      var token = headers.get("x-token").get(0);
+      try {
+          var playerInfo = authService.playerInfo(token);
+          
+          payload.setMessage("player informations");
+          payload.setData(playerInfo);
+          return new ResponseEntity<>(payload, HttpStatus.OK);
+      } catch (Exception e) {
+          payload.setMessage(e.getMessage());
+          return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
+      }
+  }
     
 }

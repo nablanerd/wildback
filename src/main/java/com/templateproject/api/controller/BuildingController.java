@@ -2,6 +2,7 @@ package com.templateproject.api.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,8 @@ import com.templateproject.api.service.BuildingService;
  * @author smaile
  *
  */
+
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 public class BuildingController {
 
@@ -121,5 +124,26 @@ public class BuildingController {
             payload.setMessage(e.getMessage());
             return new ResponseEntity<>(payload, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/buildingsall")
+    public ResponseEntity<Payload> getAllBuildings()
+    {
+        var payload = new Payload();
+
+                     try {
+                    payload.setMessage("getAllBuildings");
+                    payload.setData(buildingService.getAllBuildings());
+
+            return new ResponseEntity<>(payload, HttpStatus.OK);
+        } catch (Exception e) {
+            payload.setMessage(e.getMessage());
+            return new ResponseEntity<>(payload, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+
+
+
+
     }
 }

@@ -19,30 +19,30 @@ import com.templateproject.api.repository.PlayerRepository;
 
 @Service
 public class PlayerService {
-	private final PlayerRepository pleyerrepository;
+	private final PlayerRepository playerrepository;
 
-	public PlayerService(PlayerRepository pleyerrepository) {
-		this.pleyerrepository = pleyerrepository;
+	public PlayerService(PlayerRepository playerrepository) {
+		this.playerrepository = playerrepository;
 	}
 	
 	public void add(String username, String password, String email) {
 		//tOTO check param 
 		var player = new Player(username, password, email);
-		pleyerrepository.save(player);		
+		playerrepository.save(player);		
 	}
 	public void add2(String username, String password, String email ) {
 		//tOTO check param 
 		var player = new Player(username, password, email, new ArrayList<Province>(), new Battle());
-		pleyerrepository.save(player);
+		playerrepository.save(player);
 		System.out.println(player.toString());
 		
 	}
 	
 	
 	 public void delete(String username) {
-	        var player = pleyerrepository.findByUsername(username);
+	        var player = playerrepository.findByUsername(username);
 	        System.out.println(player.getEmail());
-	        pleyerrepository.deleteById(player.getId());
+	        playerrepository.deleteById(player.getId());
 	    }
 	 
 	 
@@ -50,7 +50,7 @@ public class PlayerService {
 	        //TODO CHECK PARAMS
 	        var player = new HashMap<String, String>();
 
-	        var userEntity = pleyerrepository.findByUsername(username);
+	        var userEntity = playerrepository.findByUsername(username);
 	        player.put("username", userEntity.getUsername());
 	        player.put("email", userEntity.getEmail());
 
@@ -60,7 +60,7 @@ public class PlayerService {
 	 public HashMap<String, String> getByEmail(String email) {
 	        //TODO CHECK PARAMS
 	        var player = new HashMap<String, String>();
-	        var userEntity = pleyerrepository.findByEmail(email);
+	        var userEntity = playerrepository.findByEmail(email);
 	        player.put("username", userEntity.getUsername());
 	        player.put("email", userEntity.getEmail());
 	        return player;
@@ -68,7 +68,7 @@ public class PlayerService {
 	 public List<HashMap<String, String>> getAll() {
 	        var payload = new ArrayList<HashMap<String, String>>();
 
-	        List<Player> playerList = pleyerrepository.findAll();
+	        List<Player> playerList = playerrepository.findAll();
 	        for (var player: playerList) {
 	            var newPlayer = new HashMap<String, String>();
 	            newPlayer.put("login", player.getUsername());
@@ -79,7 +79,7 @@ public class PlayerService {
 	    }
 	 
 	  public void update(String usernameTarget, String username, String email, String password) throws Exception {
-	        var player = pleyerrepository.findByUsername(usernameTarget);
+	        var player = playerrepository.findByUsername(usernameTarget);
 	        if (player == null) {
 	            throw new Exception(usernameTarget + "doesn't exist"); // TODO make our Exception (404 - Not found)
 	        }
@@ -92,8 +92,21 @@ public class PlayerService {
 	        if (password != null) {
 	            player.setPassword(password); //TODO Use BCrypt
 	        }
-	        pleyerrepository.save(player);
+	        playerrepository.save(player);
 	    }
+
+
+		public void updateRessource(Player currentPlayer, int wood, int water, int food, int money)
+		{
+
+			currentPlayer.setWood(wood);
+			currentPlayer.setWater(water);
+			currentPlayer.setFood(food);
+			currentPlayer.setMoney(money);
+
+			playerrepository.save(currentPlayer);
+			
+		}
 
 	    
 }

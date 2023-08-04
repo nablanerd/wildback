@@ -24,7 +24,13 @@ public class AuthService {
     private final PlayerRepository playerRepository;
     private final ProvinceService provinceService;
     private final ResourceService resourceService;
-   
+
+
+    private final static int DEFAULT_WOOD = 50;
+    private final static int DEFAULT_WATER = 100;
+    private final static int DEFAULT_FOOD = 50;
+    private final static int DEFAULT_MONEY = 100;
+
     AuthService(PlayerRepository playerRepository,
     		ProvinceService provinceService,
     		ResourceService resourceService
@@ -44,6 +50,14 @@ public class AuthService {
             player.setUsername(login);
             player.setEmail(email);
             player.setPassword(passwordHashed);
+
+
+            player.setWood(DEFAULT_WOOD);
+            player.setWater(DEFAULT_WATER);
+            player.setFood(DEFAULT_FOOD);
+            player.setMoney(DEFAULT_MONEY);
+
+
             player = playerRepository.save(player);
             return player.getId();
         } else {
@@ -109,9 +123,11 @@ public class AuthService {
   public Map<String, String> playerInfo(String token) throws Exception {
   var playerID = findPlayerIdByToken(token);
   var playerInfo = new HashMap<String, String>();
+
   var provinceInfo = provinceService.getProvinceByPlayerId(playerID).get(0);
-  Integer provinceID = (provinceService.getProvinceByPlayerId(playerID).get(0)).getId();
-  var sourceInfo = resourceService.getResourceByProvinceId(provinceID);
+ /* Integer provinceID = (provinceService.getProvinceByPlayerId(playerID).get(0)).getId();
+   var sourceInfo = resourceService.getResourceByProvinceId(provinceID); */
+
   if (playerID == null) {
       throw new Exception("Invalid TOKEN");
   }
@@ -120,19 +136,38 @@ public class AuthService {
 		 
 		 playerInfo.put("login", player.getUsername());
 		 playerInfo.put("email", player.getEmail());
-		 playerInfo.put("provinceName", provinceInfo.getName());
+
+		playerInfo.put("provinceName", provinceInfo.getName());
 		 playerInfo.put("provincePopulation", Integer.toString(provinceInfo.getPopulation()));
-		 int wood = (sourceInfo.get(0)).getWood();
+
+		 int wood = player.getWood();
 		 playerInfo.put("wood", (Integer.toString(wood)));
-		 int water = (sourceInfo.get(0)).getWater();
+
+		 int water = player.getWater();
 		 playerInfo.put("water", (Integer.toString(water)));
-		 int food = (sourceInfo.get(0)).getFood();
+
+		 int food = player.getFood();
 		 playerInfo.put("food", (Integer.toString(food)));
+        
+         int money = player.getMoney();
+		 playerInfo.put("money", (Integer.toString(money)));
 		 
 	} catch (Exception e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
 	  return playerInfo;
+  }
+
+
+  public Player getPlayerByToken(String token)
+  {
+
+      var playerID = findPlayerIdByToken(token);
+
+    var player = playerRepository.findById(playerID).get();
+
+    return player;
+
   }
 }

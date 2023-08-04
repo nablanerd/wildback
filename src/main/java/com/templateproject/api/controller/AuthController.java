@@ -69,7 +69,8 @@ public class AuthController {
             System.out.println("PLAYER ID : " + idPlayer);
             var provinceID = provinceservice.add(player.getProvincename(), idPlayer);
             System.out.println("PROVINCE ID : " + provinceID);
-            resourceservice.add(provinceID);
+            
+            //resourceservice.add(provinceID);
             payload.setMessage("PLayer '" + player.getUsername() + "' registered");	
    
             return new ResponseEntity<Payload>(payload, HttpStatus.CREATED);

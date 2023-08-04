@@ -1,5 +1,6 @@
 package com.templateproject.api.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -39,6 +40,44 @@ public class BuildingService {
         return buildingRepository.findByName(name);
     }
 
+
+    public void init()
+    {
+
+        var b1 = new Building();
+        b1.setName("b1");
+        b1.setType("t1");
+        b1.setStrength(1);
+        b1.setWoodprice(1);
+        b1.setTroop(1);
+
+        buildingRepository.save(b1);
+
+        var b2 = new Building();
+        b2.setName("b2");
+        b2.setType("t2");
+        b2.setStrength(2);
+        b2.setWoodprice(2);
+        b2.setTroop(2);
+
+        buildingRepository.save(b2);
+
+        var b3 = new Building();
+        b3.setName("b3");
+        b3.setType("t3");
+        b3.setStrength(3);
+        b3.setWoodprice(3);
+        b3.setTroop(3);
+
+        buildingRepository.save(b3);
+
+    }
+
+    public List<Building> getAllBuildings()
+    {
+    return buildingRepository.findAll();
+
+    }
 
     public void add(String name, int provinceID, TechnologyType technology, BuildingType buildingtype) {
     	Optional<Province> optionalProvince = provinceRepository.findById(provinceID);

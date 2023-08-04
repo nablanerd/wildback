@@ -31,10 +31,22 @@ public class Building {
 	private TechnologyType technology;
 	private BuildingType buildingtype;
 	
+	private int recrue;
 	
 	
 	
 	
+	
+	public int getRecrue() {
+		return recrue;
+	}
+
+
+	public void setRecrue(int recrue) {
+		this.recrue = recrue;
+	}
+
+
 	public TechnologyType getTechnology() {
 		return technology;
 	}

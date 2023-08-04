@@ -33,6 +33,14 @@ public class Troop {
 	@JoinColumn(name = "battle_id")
 	private Battle  battle;
 	
+	private int nombre;
+	
+	public int getNombre() {
+		return nombre;
+	}
+	public void setNombre(int nombre) {
+		this.nombre = nombre;
+	}
 	public int getId() {
 		return id;
 	}

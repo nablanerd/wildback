@@ -2,6 +2,7 @@ package com.templateproject.api.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 import org.hibernate.resource.jdbc.ResourceRegistry;
 import org.springframework.stereotype.Service;
@@ -20,9 +21,9 @@ public class ResourceService {
     private final ResourceRepository resourceRepository;
     private final ProvinceRepository provinceRepository;
     
-    private final static int DEFAULT_WOOD = 50;
-    private final static int DEFAULT_WATER = 100;
-    private final static int DEFAULT_FOOD = 50;
+    private final static int DEFAULT_WOOD = new Random().nextInt(100) + 1;
+    private final static int DEFAULT_WATER = new Random().nextInt(100) + 1;
+    private final static int DEFAULT_FOOD = new Random().nextInt(100) + 1;
 
     public ResourceService(ResourceRepository resourceRepository, ProvinceRepository provinceRepository) {
         this.resourceRepository = resourceRepository;

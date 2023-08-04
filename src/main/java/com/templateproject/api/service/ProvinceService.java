@@ -62,6 +62,9 @@ public class ProvinceService {
             throw new Exception("Province with ID " + id + " not found");
         }
     }
+    
+    
+    
 
     public HashMap<String, Object> getByName(String name) throws Exception {
         Optional<Province> optionalProvince = provinceRepository.findByName(name);

@@ -48,7 +48,10 @@ public class BuildingService {
         b1.setName("b1");
         b1.setType("t1");
         b1.setStrength(1);
-        b1.setWoodprice(1);
+        b1.setWood(1);
+        b1.setFood(1);
+        b1.setWater(1);
+        b1.setMoney(1);
         b1.setTroop(1);
 
         buildingRepository.save(b1);
@@ -56,19 +59,24 @@ public class BuildingService {
         var b2 = new Building();
         b2.setName("b2");
         b2.setType("t2");
-        b2.setStrength(2);
-        b2.setWoodprice(2);
-        b2.setTroop(2);
+        b1.setStrength(1);
+        b1.setWood(2);
+        b1.setFood(2);
+        b1.setWater(2);
+        b1.setMoney(2);
+        b1.setTroop(2);
 
         buildingRepository.save(b2);
 
         var b3 = new Building();
         b3.setName("b3");
         b3.setType("t3");
-        b3.setStrength(3);
-        b3.setWoodprice(3);
-        b3.setTroop(3);
-
+        b1.setStrength(3);
+        b1.setWood(3);
+        b1.setFood(3);
+        b1.setWater(3);
+        b1.setMoney(3);
+        b1.setTroop(3);
         buildingRepository.save(b3);
 
     }

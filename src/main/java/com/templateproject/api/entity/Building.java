@@ -28,7 +28,10 @@ public class Building {
 
 	private String type;
 	private int strength;
-	private int woodprice;
+	private int wood;
+	private int food;
+	private int water;
+	private int money;
 	private int troop;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -87,14 +90,7 @@ public class Building {
 		this.strength = strength;
 	}
 
-	public int getWoodprice() {
-		return woodprice;
-	}
-
-	public void setWoodprice(int woodprice) {
-
-		this.woodprice = woodprice;
-	}
+	
 
 	public int getTroop() {
 		return troop;
@@ -111,6 +107,37 @@ public class Building {
 
 	public void setProvince(Province province) {
 		this.province = province;
+	}
+	public int getWood() {
+		return wood;
+	}
+
+	public void setWood(int wood) {
+		this.wood = wood;
+	}
+
+	public int getFood() {
+		return food;
+	}
+
+	public void setFood(int food) {
+		this.food = food;
+	}
+
+	public int getWater() {
+		return water;
+	}
+
+	public void setWater(int water) {
+		this.water = water;
+	}
+
+	public int getMoney() {
+		return money;
+	}
+
+	public void setMoney(int money) {
+		this.money = money;
 	}
 
 	//

@@ -1,5 +1,7 @@
 package com.templateproject.api.controller;
 
+import java.util.Optional;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,8 +18,16 @@ import com.templateproject.api.controller.payload.BuildingPayload;
 import com.templateproject.api.controller.payload.Payload;
 import com.templateproject.api.entity.Building;
 import com.templateproject.api.entity.BuildingType;
+import com.templateproject.api.entity.Province;
 import com.templateproject.api.entity.TechnologyType;
+import com.templateproject.api.repository.BuildingRepository;
+import com.templateproject.api.repository.PlayerRepository;
+import com.templateproject.api.repository.ProvinceRepository;
 import com.templateproject.api.service.BuildingService;
+import com.templateproject.api.service.PlayerService;
+import com.templateproject.api.service.ProvinceService;
+
+import com.templateproject.api.entity.Player;
 /**
  * *
  * @author smaile
@@ -29,13 +39,57 @@ import com.templateproject.api.service.BuildingService;
 public class BuildingController {
 
     private final BuildingService buildingService;
+    private final ProvinceService provinceservice;
+    private final ProvinceRepository provinceRepository;
+    private final PlayerService playerService;
+    private final PlayerRepository playerRepository;
+    private final BuildingRepository buildingRepository;
 
-    public BuildingController(BuildingService buildingService) {
+    public BuildingController(BuildingService buildingService, 
+    		ProvinceService provinceservice,
+    		ProvinceRepository provinceRepository,
+    		PlayerService playerService,
+    		PlayerRepository playerRepository,
+    		BuildingRepository buildingRepository) {
         this.buildingService = buildingService;
+        this.provinceservice = provinceservice;
+        this.provinceRepository = provinceRepository;
+        this.playerService = playerService;
+        this.playerRepository = playerRepository;
+        this.buildingRepository = buildingRepository;
     }
     
 
-
+    @PutMapping("/updatebuilding/{buildingId}/{provinceId}")
+    public ResponseEntity<Payload> updateBuildingWithProvince(@PathVariable int buildingId, @PathVariable int provinceId) {
+    	
+    	Province province  = provinceRepository.findById(provinceId).get();
+    	Building building = buildingService.getById(buildingId);
+		Player player  = playerRepository.findById(province.getPlayer().getId()).get();
+    			if( player.getWood() > building.getWood() && 
+    				player.getWater() > building.getWater() &&
+    				player.getFood() > building.getFood() &&
+    				player.getMoney() > building.getMoney()) {
+    				
+    				player.setWood(player.getWood() - building.getWood());
+    				player.setWater(player.getWater() - building.getWater());
+    				player.setFood(player.getFood() - building.getFood());
+    				player.setMoney(player.getMoney() - building.getMoney());
+    				building.setProvince(province);	
+    				buildingRepository.save(building);
+    				playerRepository.save(player);
+    				provinceRepository.save(province);
+    				Payload p = new Payload();
+    				p.setMessage("building mis a jour avec succes");
+        			return new ResponseEntity<>(p, HttpStatus.OK);
+    			}
+    			
+    			Payload p = new Payload();
+				p.setMessage("echec mis a jours du building");
+    			return new ResponseEntity<>(p, HttpStatus.NO_CONTENT);
+    }
+    
+    
     
     @PostMapping("/building")
     public ResponseEntity<Payload> addBuilding(@RequestBody BuildingPayload building) {
@@ -140,10 +194,7 @@ public class BuildingController {
             payload.setMessage(e.getMessage());
             return new ResponseEntity<>(payload, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-
-
-
-
     }
+    
+  
 }

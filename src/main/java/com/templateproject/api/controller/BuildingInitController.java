@@ -42,19 +42,8 @@ public class BuildingInitController {
     {
 
         var payload = new Payload();
-buildingService.init();
-
+        buildingService.init();
         payload.setMessage("buildings created");
-        
-
         return new ResponseEntity<>(payload, HttpStatus.OK);
-
-
-
-
-
-
     }
-    
-
 }

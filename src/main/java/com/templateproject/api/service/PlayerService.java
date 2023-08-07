@@ -78,6 +78,10 @@ public class PlayerService {
 	        return payload;
 	    }
 	 
+	 
+	
+	 
+	 
 	  public void update(String usernameTarget, String username, String email, String password) throws Exception {
 	        var player = playerrepository.findByUsername(usernameTarget);
 	        if (player == null) {

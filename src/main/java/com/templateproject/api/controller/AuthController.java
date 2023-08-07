@@ -158,5 +158,33 @@ public class AuthController {
           return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
       }
   }
+  
+  @GetMapping("/connectedPlayers")
+  public ResponseEntity<Payload> getConnectedPlayers() {
+      var payload = new Payload();
+      try {
+          payload.setData(authService.getConnectedPLayers());
+          payload.setMessage("Get all connected players");
+          return new ResponseEntity<>(payload, HttpStatus.OK);
+      } catch (Exception e) {
+          payload.setMessage(e.getMessage());
+          payload.setData(null);
+          return new ResponseEntity<>(payload, HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+  }
+  @GetMapping("/otherConnectedPlayers")
+  public ResponseEntity<Payload> getConnectedPlayers(@RequestHeader HttpHeaders headers) {
+      var payload = new Payload();
+      try {
+    	  var token = headers.get("x-token").get(0);
+          payload.setData(authService.getOtherConnectedPLayers(token));
+          payload.setMessage("Get all connected players");
+          return new ResponseEntity<>(payload, HttpStatus.OK);
+      } catch (Exception e) {
+          payload.setMessage(e.getMessage());
+          payload.setData(null);
+          return new ResponseEntity<>(payload, HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+  }
     
 }

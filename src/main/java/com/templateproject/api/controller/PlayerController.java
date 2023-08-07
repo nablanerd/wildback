@@ -116,6 +116,10 @@ public class PlayerController {
 	        }
 	    }
 	   
+	 
+	   
+	   
+	   
 	   @PutMapping("/player/{username}")
 	    public ResponseEntity<Payload> updatePlayer(@PathVariable String username, @RequestBody Player player) {
 	        var payload = new Payload();
@@ -128,45 +132,25 @@ public class PlayerController {
 	            return new ResponseEntity<>(payload, HttpStatus.INTERNAL_SERVER_ERROR);
 	        }
 	    }
-
+	   
+	   
 		@PutMapping("/player")
 		public ResponseEntity<Payload> updateRessource(@RequestHeader HttpHeaders headers, @RequestBody PlayerRessource playerRessource)
 		{
 			var payload = new Payload();
-
 			var token = headers.get("x-token").get(0);
-
 			try {
 				var player = authService.getPlayerByToken(token);
-
 				playerservice.updateRessource(player, playerRessource.getWood(), playerRessource.getWater(), playerRessource.getFood(), playerRessource.getMoney());
 				payload.setMessage("player ressources updated");
-
 				return new ResponseEntity<>(payload, HttpStatus.OK);
 
-
 			} catch (Exception e) {
-				
 				payload.setMessage(e.getMessage());
 				return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
 	  
 			}
-
-
-
-
-
-
 		}
-		
-		
-		
-		
-
-
-
-
-
 }
 
 

@@ -33,8 +33,12 @@ public class Player {
 	@NotNull
     @Column(name = "email",unique = true)
 	private String email;
+	@Column(name = "isConnected")
+	private Boolean isConnected = false;
 	
 	
+	
+
 	@OneToMany(mappedBy = "player")
 	private List<Province> provinces;
 	
@@ -140,6 +144,13 @@ return money;
 		this.money = money;
 	}
 
+	public Boolean getIsConnected() {
+		return isConnected;
+	}
+
+	public void setIsConnected(Boolean isConnected) {
+		this.isConnected = isConnected;
+	}
 
 	@Override
 	public String toString() {

@@ -82,6 +82,8 @@ public class AuthService {
         if (dbUser != null) {
             var result = BCrypt.verifyer().verify(password.toCharArray(), dbUser.getPassword());
             if (result.verified) {
+            	dbUser.setIsConnected(true);
+            	playerRepository.save(dbUser);
                 var token = GenerateToken.newUserToken(dbUser.getId());
                 tokens.add(new Token(dbUser.getId(), token));
                 return token;
@@ -111,14 +113,33 @@ public class AuthService {
         return playerInfo;
     }
 
+//    public void logout(String token) {
+//        for (Token item : tokens) {
+//            if (item.getToken().equals(token)) {
+//                tokens.remove(item);
+//                return;
+//            }
+//        }
+//    }
+    
+   /** 
+    * @param token
+    * invalide le token et met a jour le chap isConnected à false ( deconnexion) 
+    * 
+    * */
     public void logout(String token) {
-        for (Token item : tokens) {
-            if (item.getToken().equals(token)) {
-                tokens.remove(item);
-                return;
+        Integer playerId = findPlayerIdByToken(token);
+        if (playerId != null) {
+            Player player = playerRepository.findById(playerId).orElse(null);
+            if (player != null) {
+                player.setIsConnected(false);
+                playerRepository.save(player);
             }
         }
+        tokens.removeIf(item -> item.getToken().equals(token));
     }
+    
+    
     
   public Map<String, String> playerInfo(String token) throws Exception {
   var playerID = findPlayerIdByToken(token);
@@ -162,12 +183,51 @@ public class AuthService {
 
   public Player getPlayerByToken(String token)
   {
-
-      var playerID = findPlayerIdByToken(token);
-
+    var playerID = findPlayerIdByToken(token);
     var player = playerRepository.findById(playerID).get();
-
     return player;
 
+  }
+  
+  /**
+   * 
+   * @return  tout les  joueurs connectés 
+   */
+  
+  public List<HashMap<String, String>> getConnectedPLayers() {
+      var payload = new ArrayList<HashMap<String, String>>(); 
+      List<Player> playerList = playerRepository.findByIsConnected(true);
+      for (var player: playerList) {
+          var newPlayer = new HashMap<String, String>();
+          newPlayer.put("login", player.getUsername());
+          newPlayer.put("email", player.getEmail());
+          newPlayer.put("id", Integer.toString(player.getId()));
+          payload.add(newPlayer);
+    	 
+      }
+      return payload;
+  }
+  
+  /**
+   * recuperer les autres joueurs connectés pour choisir un comme adversaire
+   * @param token du joueur connecté
+   * @return
+   */
+  
+  public List<HashMap<String, String>> getOtherConnectedPLayers(String token) {
+      var payload = new ArrayList<HashMap<String, String>>();
+      var playerID = findPlayerIdByToken(token);
+      
+      List<Player> playerList = playerRepository.findByIsConnected(true);
+      for (var player: playerList) {
+    	  if(playerID != player.getId()) {
+          var newPlayer = new HashMap<String, String>();
+          newPlayer.put("login", player.getUsername());
+          newPlayer.put("email", player.getEmail());
+          newPlayer.put("id", Integer.toString(player.getId()));
+          payload.add(newPlayer);
+    	  }
+      }
+      return payload;
   }
 }

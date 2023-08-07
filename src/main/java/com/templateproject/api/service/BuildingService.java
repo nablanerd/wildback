@@ -66,7 +66,7 @@ public class BuildingService {
         var b2 = new Building();
         b2.setName("b2");
         b2.setType("t2");
-        b1.setStrength(10);
+        b2.setStrength(10);
         b2.setWood(10);
         b2.setFood(10);
         b2.setWater(10);

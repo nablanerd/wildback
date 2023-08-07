@@ -80,10 +80,18 @@ public class BuildingController {
                     player.getFood() > building.getFood() &&
                     player.getMoney() > building.getMoney()) {
 
-                player.setWood(player.getWood() - building.getWood());
-                player.setWater(player.getWater() - building.getWater());
-                player.setFood(player.getFood() - building.getFood());
-                player.setMoney(player.getMoney() - building.getMoney());
+                var newWood = player.getWood() - building.getWood() < 0 ? 0 : player.getWood() - building.getWood();        
+                player.setWood(newWood);
+
+                var newWater = player.getWater() - building.getWater() < 0? 0 : player.getWater() - building.getWater();
+                player.setWater(newWater);
+
+                var newFood = player.getFood() - building.getFood() <0 ?0: player.getFood() - building.getFood();
+                player.setFood(newFood);
+
+                var newMoney = player.getMoney() - building.getMoney() <0 ?0 : player.getMoney() - building.getMoney();
+                player.setMoney(newMoney);
+
                 building.setProvince(province);
                 buildingRepository.save(building);
                 playerRepository.save(player);
@@ -262,12 +270,35 @@ public class BuildingController {
 
             var player = province.getPlayer();
 
-            if (player.getWood() > (building.getTroopWood() * building.getTroop()) &&
-                    player.getWater() > (building.getTroopWater() * buildingTroop.getTroop()) &&
-                    player.getFood() > (building.getTroopFood() * buildingTroop.getTroop()) &&
-                    player.getMoney() > (building.getTroopMoney() * buildingTroop.getTroop())) {
+            var priceTroopWood = building.getWood() * buildingTroop.getTroop();
+            var priceTroopWater = building.getWater() * buildingTroop.getTroop();
+            var priceTroopFood = building.getFood() * buildingTroop.getTroop();
+            var priceTroopMoney = building.getMoney() * buildingTroop.getTroop();
+
+            if (player.getWood() > priceTroopWood &&
+                    player.getWater() >  priceTroopWater &&
+                    player.getFood() > priceTroopFood &&
+                    player.getMoney() > priceTroopMoney) {
 
                 buildingService.updateTroop(id, buildingTroop.getTroop());
+
+                var newWood = player.getWood() - priceTroopWood < 0 ? 0 : player.getWood() - priceTroopWood;
+                player.setWood(newWood);
+
+                var newWater = player.getWater() - priceTroopWater < 0 ? 0 : player.getWater() - priceTroopWater;
+                player.setWater(newWater);
+
+                var newFood = player.getFood() - priceTroopFood < 0 ? 0 : player.getFood() - priceTroopFood;
+                player.setFood(newFood);
+
+                var newMoney = player.getMoney() - priceTroopMoney < 0 ? 0:player.getMoney() - priceTroopMoney;
+                player.setMoney(newMoney);
+
+                playerRepository.save(player);
+
+
+
+
                 payload.setMessage("Building Troop updated");
 
                 data.put("type", "ok");

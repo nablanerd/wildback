@@ -79,6 +79,11 @@ public class Province {
 	}
 
 	
+	public List<Building> getBuildings()
+	{
+
+		return buildings;
+	}
 	
 	
 }

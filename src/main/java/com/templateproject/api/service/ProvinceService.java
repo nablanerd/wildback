@@ -115,5 +115,12 @@ public class ProvinceService {
     	List<Province> provinces = provinceRepository.getProvinceByPlayerId(playerId);
     	return provinces;
     }
+
+
+    public Province getOneProvinceById(Integer idProvince)
+    {
+
+        return provinceRepository.findById(idProvince).get();
+    }
    
 }

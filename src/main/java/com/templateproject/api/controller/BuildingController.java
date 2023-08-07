@@ -1,5 +1,6 @@
 package com.templateproject.api.controller;
 
+import java.util.HashMap;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.templateproject.api.controller.payload.BuildingPayload;
+import com.templateproject.api.controller.payload.BuildingTroop;
 import com.templateproject.api.controller.payload.Payload;
 import com.templateproject.api.entity.Building;
 import com.templateproject.api.entity.BuildingType;
@@ -28,8 +30,10 @@ import com.templateproject.api.service.PlayerService;
 import com.templateproject.api.service.ProvinceService;
 
 import com.templateproject.api.entity.Player;
+
 /**
  * *
+ * 
  * @author smaile
  *
  */
@@ -45,12 +49,12 @@ public class BuildingController {
     private final PlayerRepository playerRepository;
     private final BuildingRepository buildingRepository;
 
-    public BuildingController(BuildingService buildingService, 
-    		ProvinceService provinceservice,
-    		ProvinceRepository provinceRepository,
-    		PlayerService playerService,
-    		PlayerRepository playerRepository,
-    		BuildingRepository buildingRepository) {
+    public BuildingController(BuildingService buildingService,
+            ProvinceService provinceservice,
+            ProvinceRepository provinceRepository,
+            PlayerService playerService,
+            PlayerRepository playerRepository,
+            BuildingRepository buildingRepository) {
         this.buildingService = buildingService;
         this.provinceservice = provinceservice;
         this.provinceRepository = provinceRepository;
@@ -58,51 +62,71 @@ public class BuildingController {
         this.playerRepository = playerRepository;
         this.buildingRepository = buildingRepository;
     }
-    
 
-    @PutMapping("/updatebuilding/{buildingId}/{provinceId}")
-    public ResponseEntity<Payload> updateBuildingWithProvince(@PathVariable int buildingId, @PathVariable int provinceId) {
-    	
-    	Province province  = provinceRepository.findById(provinceId).get();
-    	Building building = buildingService.getById(buildingId);
-		Player player  = playerRepository.findById(province.getPlayer().getId()).get();
-    			if( player.getWood() > building.getWood() && 
-    				player.getWater() > building.getWater() &&
-    				player.getFood() > building.getFood() &&
-    				player.getMoney() > building.getMoney()) {
-    				
-    				player.setWood(player.getWood() - building.getWood());
-    				player.setWater(player.getWater() - building.getWater());
-    				player.setFood(player.getFood() - building.getFood());
-    				player.setMoney(player.getMoney() - building.getMoney());
-    				building.setProvince(province);	
-    				buildingRepository.save(building);
-    				playerRepository.save(player);
-    				provinceRepository.save(province);
-    				Payload p = new Payload();
-    				p.setMessage("building mis a jour avec succes");
-        			return new ResponseEntity<>(p, HttpStatus.OK);
-    			}
-    			
-    			Payload p = new Payload();
-				p.setMessage("echec mis a jours du building");
-    			return new ResponseEntity<>(p, HttpStatus.NO_CONTENT);
+    @PutMapping("/updatebuildingwithprovince/{buildingId}/{provinceId}")
+    public ResponseEntity<Payload> updateBuildingWithProvince(@PathVariable int buildingId,
+            @PathVariable int provinceId) {
+
+        Payload payload = new Payload();
+        var data = new HashMap<String, String>();
+
+        try {
+
+            Province province = provinceRepository.findById(provinceId).get();
+            Building building = buildingService.getById(buildingId);
+            Player player = playerRepository.findById(province.getPlayer().getId()).get();
+            if (player.getWood() > building.getWood() &&
+                    player.getWater() > building.getWater() &&
+                    player.getFood() > building.getFood() &&
+                    player.getMoney() > building.getMoney()) {
+
+                player.setWood(player.getWood() - building.getWood());
+                player.setWater(player.getWater() - building.getWater());
+                player.setFood(player.getFood() - building.getFood());
+                player.setMoney(player.getMoney() - building.getMoney());
+                building.setProvince(province);
+                buildingRepository.save(building);
+                playerRepository.save(player);
+                provinceRepository.save(province);
+
+                payload.setMessage("building mis a jour avec succes");
+
+                data.put("type", "ok");
+                data.put("message", "building mis a jour avec succes");
+
+                payload.setData(data);
+
+                return new ResponseEntity<>(payload, HttpStatus.OK);
+            }
+
+            payload.setMessage("pas assez de ressource pour construire building");
+
+            data.put("type", "ko");
+            data.put("message", "pas assez de ressource pour construire building");
+
+            payload.setData(data);
+
+            return new ResponseEntity<>(payload, HttpStatus.OK);
+
+        } catch (Exception e) {
+            payload.setMessage(e.getMessage());
+            return new ResponseEntity<>(payload, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
-    
-    
-    
+
     @PostMapping("/building")
     public ResponseEntity<Payload> addBuilding(@RequestBody BuildingPayload building) {
         var payload = new Payload();
         try {
             TechnologyType technology = BuildingService.getTechnologyTypeFromString(building.getTechnology());
             BuildingType buildingType = BuildingService.getBuildingTypeFromString(building.getBuildingtype());
-            
+
             if (technology == null || buildingType == null) {
                 payload.setMessage("type technolofy ou building invalide");
                 return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
             }
-            
+
             buildingService.add(building.getName(), building.getProvinceID(), technology, buildingType);
             payload.setMessage("Building created with success !!");
             return new ResponseEntity<>(payload, HttpStatus.CREATED);
@@ -112,7 +136,7 @@ public class BuildingController {
         }
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/building/{id}")
     public ResponseEntity<Payload> getBuildingById(@PathVariable int id) {
         var payload = new Payload();
         try {
@@ -140,12 +164,12 @@ public class BuildingController {
         }
     }
 
-  
-    @PutMapping("/{id}")
+    @PutMapping("/building/{id}")
     public ResponseEntity<Payload> updateBuilding(@PathVariable int id, @RequestBody Building building) {
         var payload = new Payload();
         try {
-            buildingService.update(id, building.getName(), building.getProvince(), building.getTechnology(), building.getBuildingtype());
+            buildingService.update(id, building.getName(), building.getProvince(), building.getTechnology(),
+                    building.getBuildingtype());
             payload.setMessage("Building updated");
             return new ResponseEntity<>(payload, HttpStatus.OK);
         } catch (Exception e) {
@@ -166,7 +190,7 @@ public class BuildingController {
             return new ResponseEntity<>(payload, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     @DeleteMapping("/name/{buildingname}")
     public ResponseEntity<Payload> deleteBuildingByName(@PathVariable String buildingname) {
         var payload = new Payload();
@@ -181,13 +205,12 @@ public class BuildingController {
     }
 
     @GetMapping("/buildingsall")
-    public ResponseEntity<Payload> getAllBuildings()
-    {
+    public ResponseEntity<Payload> getAllBuildings() {
         var payload = new Payload();
 
-                     try {
-                    payload.setMessage("getAllBuildings");
-                    payload.setData(buildingService.getAllBuildings());
+        try {
+            payload.setMessage("getAllBuildings");
+            payload.setData(buildingService.getAllBuildings());
 
             return new ResponseEntity<>(payload, HttpStatus.OK);
         } catch (Exception e) {
@@ -195,6 +218,79 @@ public class BuildingController {
             return new ResponseEntity<>(payload, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
-  
+
+    @GetMapping("/buildingsavaible")
+    public ResponseEntity<Payload> getAvaibleBuildings() {
+        var payload = new Payload();
+
+        try {
+            payload.setMessage("getAvaibleBuildings");
+            payload.setData(buildingService.getAvaibleBuildings());
+
+            return new ResponseEntity<>(payload, HttpStatus.OK);
+        } catch (Exception e) {
+            payload.setMessage(e.getMessage());
+            return new ResponseEntity<>(payload, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/getbuildingsfromprovence/{idprovince}")
+    public ResponseEntity<Payload> getBuildingsFromProvence(@PathVariable Integer idprovince) {
+        var payload = new Payload();
+
+        try {
+            payload.setMessage("getAvaibleBuildings");
+            payload.setData(buildingService.getBuildingsFromProvence(idprovince));
+
+            return new ResponseEntity<>(payload, HttpStatus.OK);
+        } catch (Exception e) {
+            payload.setMessage(e.getMessage());
+            return new ResponseEntity<>(payload, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping("/buildingtroop/{id}")
+    public ResponseEntity<Payload> updateBuildingTroop(@PathVariable int id, @RequestBody BuildingTroop buildingTroop) {
+        var payload = new Payload();
+        var data = new HashMap<String, String>();
+
+        try {
+
+            Building building = buildingService.getById(id);
+
+            var province = building.getProvince();
+
+            var player = province.getPlayer();
+
+            if (player.getWood() > (building.getTroopWood() * building.getTroop()) &&
+                    player.getWater() > (building.getTroopWater() * buildingTroop.getTroop()) &&
+                    player.getFood() > (building.getTroopFood() * buildingTroop.getTroop()) &&
+                    player.getMoney() > (building.getTroopMoney() * buildingTroop.getTroop())) {
+
+                buildingService.updateTroop(id, buildingTroop.getTroop());
+                payload.setMessage("Building Troop updated");
+
+                data.put("type", "ok");
+                data.put("message", "Building Troop updated");
+
+                payload.setData(data);
+
+                return new ResponseEntity<>(payload, HttpStatus.OK);
+
+            }
+
+            payload.setMessage("buildingtroop pas assez de ressource pour recruter");
+            data.put("type", "ko");
+            data.put("message", "pas assez de ressource pour recruter");
+
+            payload.setData(data);
+
+            return new ResponseEntity<>(payload, HttpStatus.OK);
+
+        } catch (Exception e) {
+            payload.setMessage(e.getMessage());
+            return new ResponseEntity<>(payload, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

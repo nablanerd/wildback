@@ -34,6 +34,11 @@ public class Building {
 	private int money;
 	private int troop;
 
+	private int troopwood;
+	private int troopfood;
+	private int troopwater;
+	private int troopmoney;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "province_id")
 	private Province province;
@@ -159,4 +164,53 @@ public class Building {
 	// public void setBuildingtype(BuildingType buildingtype) {
 	// this.buildingtype = buildingtype;
 	// }
+
+
+
+
+	public int getTroopWood()
+	{
+		return troopwood;
+	}
+
+	public void setTroopWood(int troopwood)
+	{
+		this.troopwood=troopwood;
+	}
+
+
+	public int getTroopFood()
+	{
+		return troopfood;
+	}
+
+	public void setTroopFood(int troopfood)
+	{
+		this.troopfood = troopfood;
+	}
+
+
+	public int getTroopWater()
+	{
+		return troopwater;
+	}
+
+
+	public void setTroopWater(int troopwater)
+	{
+
+		this.troopwater = troopwater;
+	}
+
+
+	public int getTroopMoney()
+	{
+		return troopmoney;
+	}
+
+	public void setTroopMoney(int troopmoney)
+	{
+		this.troopmoney = troopmoney;
+	}
+	
 }

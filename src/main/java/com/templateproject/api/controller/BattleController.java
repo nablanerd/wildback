@@ -1,5 +1,7 @@
 package com.templateproject.api.controller;
 
+import java.util.HashMap;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -7,6 +9,7 @@ import com.templateproject.api.controller.payload.Payload;
 import com.templateproject.api.entity.Battle;
 import com.templateproject.api.service.BattleService;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 public class BattleController {
 
@@ -109,4 +112,26 @@ public class BattleController {
             return new ResponseEntity<>(payload, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
+        @GetMapping("/fakebattle")
+            public ResponseEntity<Payload> fakebattle() 
+{
+            var payload = new Payload();
+
+            payload.setMessage("the winner is "+2);
+            var data = new HashMap<String, Object>();
+
+            data.put("winnerId", 2);
+            data.put("loserId", 1);
+
+            payload.setData(data);
+
+    return new ResponseEntity<>(payload, HttpStatus.OK);
+
+
+}
+
+
+
 }

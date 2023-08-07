@@ -1,6 +1,8 @@
 package com.templateproject.api.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,7 @@ import com.templateproject.api.service.AuthService;
 import com.templateproject.api.service.ProvinceService;
 import com.templateproject.api.service.ResourceService;
 import com.templateproject.api.controller.payload.*;
+import com.templateproject.api.entity.Player;
 
 /**
  * *
@@ -186,5 +189,42 @@ public class AuthController {
           return new ResponseEntity<>(payload, HttpStatus.INTERNAL_SERVER_ERROR);
       }
   }
+
+  @GetMapping("/fakeotherconnectedplayers")
+    public ResponseEntity<Payload> getfakeotherConnectedPlayers() 
+{
+
+      var payload = new Payload();
+
+var playerList = new ArrayList<HashMap<String, Object>>();
+
+var newPlayer = new HashMap<String, Object>();
+newPlayer.put("login", "l1");
+newPlayer.put("email", "e1");
+newPlayer.put("id", 1);
+playerList.add(newPlayer);
+
+var newPlayer2 = new HashMap<String, Object>();
+newPlayer2.put("login", "l2");
+newPlayer2.put("email", "e2");
+newPlayer2.put("id", 2);
+playerList.add(newPlayer2);
+
+var newPlayer3 = new HashMap<String, Object>();
+newPlayer3.put("login", "l3");
+newPlayer3.put("email", "e3");
+newPlayer3.put("id", 3);
+playerList.add(newPlayer3);
+
+payload.setData(playerList);
+
+payload.setMessage("Get all faked connected players");
+
+return new ResponseEntity<>(payload, HttpStatus.OK);
+
+
+
+}
+
     
 }

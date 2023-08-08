@@ -33,6 +33,7 @@ public class Player {
 	@NotNull
     @Column(name = "email",unique = true)
 	private String email;
+	//commentaire 
 	@Column(name = "isConnected")
 	private Boolean isConnected = false;
 	

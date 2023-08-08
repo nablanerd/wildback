@@ -2,11 +2,13 @@ package com.templateproject.api.controller;
 
 import java.util.HashMap;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.templateproject.api.controller.payload.Payload;
 import com.templateproject.api.entity.Battle;
+import com.templateproject.api.service.AuthService;
 import com.templateproject.api.service.BattleService;
 
 @CrossOrigin(origins = "http://localhost:4200")
@@ -14,28 +16,47 @@ import com.templateproject.api.service.BattleService;
 public class BattleController {
 
     private final BattleService battleService;
-    public BattleController(BattleService battleService) {
+
+        private final AuthService authService;
+
+    public BattleController(AuthService authService,BattleService battleService) {
         this.battleService = battleService;
+        this.authService = authService;
     }
     
     
 
     
-    @GetMapping("/battle/{currentPlayerId}/{adversePlayerId}")
-    public ResponseEntity<Payload> attack(@PathVariable int currentPlayerId,@PathVariable int adversePlayerId) {
+    @GetMapping("/attack/{adversePlayerId}")
+    public ResponseEntity<Payload> attack(@RequestHeader HttpHeaders headers, @PathVariable int adversePlayerId) {
+
+        String token = headers.get("x-token").get(0);
 
             var payload = new Payload();
+            var data = new HashMap<String, Object>();
+
             try {
-                var currentPlayerPoints = battleService.getPoints(currentPlayerId);
+                var currentPlayer = authService.getPlayerByToken(token);
+
+                var currentPlayerPoints = battleService.getPoints(currentPlayer.getId());
                 var adversePlayerPoints = battleService.getPoints(adversePlayerId);
 
 			    if(currentPlayerPoints > adversePlayerPoints)
 			    {
-			    	payload.setMessage("The winner is " + currentPlayerId);
+			    	payload.setMessage("You are The winner ");
+
+                    data.put("iswinner", true);
+                    payload.setData(data);
+
+
 			    }
 			    else
 			    {
-			    	payload.setMessage("The winner is " + adversePlayerId);
+			    	payload.setMessage("You are Loser ");
+
+                    data.put("iswinner", false);
+                    payload.setData(data);
+
 			    }
                 
 			    return new ResponseEntity<>(payload, HttpStatus.OK);
@@ -153,11 +174,11 @@ public class BattleController {
 {
             var payload = new Payload();
 
-            payload.setMessage("the winner is "+2);
+            payload.setMessage("the winner is "+1);
             var data = new HashMap<String, Object>();
 
-            data.put("winnerId", 2);
-            data.put("loserId", 1);
+            data.put("winnerId", 1);
+            data.put("loserId", 2);
 
             payload.setData(data);
 

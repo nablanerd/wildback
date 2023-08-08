@@ -16,6 +16,6 @@ import com.templateproject.api.entity.Player;
 public interface PlayerRepository extends JpaRepository<Player, Integer>{
 	public Player findByUsername(String username);
 	public Player findByEmail(String email);
-	
-	//public List<Player> findByIsConnected(boolean isConnected);
+
+	public List<Player> findByIsConnected(boolean isConnected);
 }

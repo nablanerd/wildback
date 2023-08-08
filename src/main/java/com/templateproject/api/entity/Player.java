@@ -2,10 +2,14 @@ package com.templateproject.api.entity;
 
 import java.util.List;
 
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Type;
+import org.hibernate.type.NumericBooleanConverter;
+
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -35,11 +39,12 @@ public class Player {
 	@NotNull
     @Column(name = "email",unique = true)
 	private String email;
-	
-//@Column(name = "isconnected")
+	//commentaire 
+	/* @Column(name = "isConnected")
+	@ColumnDefault("true") */
 
-@Type(type="true_false")
-private Boolean isconnected = true;
+@Convert(converter = NumericBooleanConverter.class)
+private Boolean isConnected;
 	
 	
 	
@@ -58,20 +63,27 @@ private Boolean isconnected = true;
 	 private int money;
 	
 	
-	public Player() {}
+	public Player() {
+		this.isConnected = false;
+	}
 
-	public Player( String username, String password, String email, List<Province> provinces, Battle battle) {
+	public Player( String username, String password, String email, List<Province> provinces,
+		Battle battle) {
 		this.username = username;
 		this.password = password;
 		this.email = email;
 		this.provinces = provinces;
 		this.battle = battle;
+		
+		this.isConnected = false;
 	}
 	
 	public Player( String username, String password, String email ) {
 		this.username = username;
 		this.password = password;
 		this.email = email;
+		this.isConnected = false;
+		
 	}
 	
 	
@@ -150,11 +162,11 @@ return money;
 	}
 
 	public Boolean getIsConnected() {
-		return isconnected;
+		return isConnected;
 	}
 
-	public void setIsConnected(Boolean isconnected) {
-		this.isconnected = isconnected;
+	public void setIsConnected(Boolean isConnected) {
+		this.isConnected = isConnected;
 	}
 
 	@Override

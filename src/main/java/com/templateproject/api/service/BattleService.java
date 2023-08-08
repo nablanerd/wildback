@@ -6,7 +6,10 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.templateproject.api.entity.Battle;
+import com.templateproject.api.entity.Province;
+import com.templateproject.api.entity.Building;
 import com.templateproject.api.repository.BattleRepository;
+import com.templateproject.api.repository.PlayerRepository;
 /**
  * *
  * @author smaile
@@ -16,11 +19,33 @@ import com.templateproject.api.repository.BattleRepository;
 public class BattleService {
 
     private final BattleRepository battleRepository;
+    private final PlayerService playerService ;
+    private final PlayerRepository playerRepository;
+    private final ProvinceService  ProvinceService;
 
-    public BattleService(BattleRepository battleRepository) {
+    public BattleService(BattleRepository battleRepository, PlayerService playerService,PlayerRepository playerRepository,ProvinceService  ProvinceService) {
         this.battleRepository = battleRepository;
+        this.playerService = playerService;
+        this.playerRepository = playerRepository;
+        this.ProvinceService = ProvinceService;
     }
 
+    public int getPoints(Integer idPlayer) {
+
+		    //var player =  playerRepository.findById(idPlayer);
+		
+		    var points = 0;
+		
+		    for (Province province : ProvinceService.getProvinceByPlayerId(idPlayer)) {
+			    for (Building building : province.getBuildings()) {
+				    var power = building.getStrength() * building.getTroop();
+				    		points += power;
+				    	}
+		   }
+		return points;
+    }
+    
+    
     public void add(Battle battle) {
         // TODO: Ajoutez ici les validations des paramètres
         battleRepository.save(battle);

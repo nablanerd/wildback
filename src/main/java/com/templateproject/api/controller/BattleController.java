@@ -11,11 +11,45 @@ import com.templateproject.api.service.BattleService;
 public class BattleController {
 
     private final BattleService battleService;
-
     public BattleController(BattleService battleService) {
         this.battleService = battleService;
     }
+    
+    
 
+    
+    @GetMapping("/battle/{currentPlayerId}/{adversePlayerId}")
+    public ResponseEntity<Payload> attack(@PathVariable int currentPlayerId,@PathVariable int adversePlayerId) {
+
+            var payload = new Payload();
+            try {
+                var currentPlayerPoints = battleService.getPoints(currentPlayerId);
+                var adversePlayerPoints = battleService.getPoints(adversePlayerId);
+
+			    if(currentPlayerPoints > adversePlayerPoints)
+			    {
+			    	payload.setMessage("The winner is " + currentPlayerId);
+			    }
+			    else
+			    {
+			    	payload.setMessage("The winner is " + adversePlayerId);
+			    }
+                
+			    return new ResponseEntity<>(payload, HttpStatus.OK);
+            	} catch (Exception e) {
+                payload.setMessage(e.getMessage());
+                payload.setData(null);
+                return new ResponseEntity<>(payload, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+  }
+    
+    
+    
+    
+    
+    
+    
+    
     @PostMapping("/battle")
     public ResponseEntity<Payload> addBattle(@RequestBody Battle battle) {
         var payload = new Payload();

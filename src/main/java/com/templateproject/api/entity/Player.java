@@ -2,6 +2,8 @@ package com.templateproject.api.entity;
 
 import java.util.List;
 
+import org.hibernate.annotations.Type;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,8 +35,11 @@ public class Player {
 	@NotNull
     @Column(name = "email",unique = true)
 	private String email;
-	@Column(name = "isConnected")
-	private Boolean isConnected = false;
+	
+//@Column(name = "isconnected")
+
+@Type(type="true_false")
+private Boolean isconnected = true;
 	
 	
 	
@@ -145,11 +150,11 @@ return money;
 	}
 
 	public Boolean getIsConnected() {
-		return isConnected;
+		return isconnected;
 	}
 
-	public void setIsConnected(Boolean isConnected) {
-		this.isConnected = isConnected;
+	public void setIsConnected(Boolean isconnected) {
+		this.isconnected = isconnected;
 	}
 
 	@Override

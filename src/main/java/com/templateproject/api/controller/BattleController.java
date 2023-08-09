@@ -8,8 +8,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.templateproject.api.controller.payload.Payload;
 import com.templateproject.api.entity.Battle;
+import com.templateproject.api.entity.Province;
+import com.templateproject.api.repository.PlayerRepository;
 import com.templateproject.api.service.AuthService;
 import com.templateproject.api.service.BattleService;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
@@ -17,14 +23,47 @@ public class BattleController {
 
     private final BattleService battleService;
 
+    	private final PlayerRepository playerrepository;
+
+
         private final AuthService authService;
 
-    public BattleController(AuthService authService,BattleService battleService) {
+    public BattleController(AuthService authService,BattleService battleService, PlayerRepository playerrepository) {
         this.battleService = battleService;
         this.authService = authService;
+        this.playerrepository = playerrepository;
+
     }
     
     
+    @GetMapping("/points")
+    public ResponseEntity<Payload> points(@RequestHeader HttpHeaders headers) {
+
+
+            var payload = new Payload();
+            var data = new HashMap<String, Object>();
+
+            try {
+                        String token = headers.get("x-token").get(0);
+
+
+                var currentPlayer = authService.getPlayerByToken(token);
+
+                var currentPlayerPoints = battleService.getPoints(currentPlayer.getId());
+                
+                	payload.setMessage("You are The winner ");
+
+                    data.put("points", currentPlayerPoints);
+
+                    payload.setData(data);
+
+			    return new ResponseEntity<>(payload, HttpStatus.OK);
+            	} catch (Exception e) {
+                payload.setMessage(e.getMessage());
+                payload.setData(null);
+                return new ResponseEntity<>(payload, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+  }
 
     
     @GetMapping("/attack/{adversePlayerId}")
@@ -37,21 +76,28 @@ public class BattleController {
 
             try {
                 var currentPlayer = authService.getPlayerByToken(token);
+                var adversePlayer = playerrepository.findById(adversePlayerId).get();
 
                 var currentPlayerPoints = battleService.getPoints(currentPlayer.getId());
                 var adversePlayerPoints = battleService.getPoints(adversePlayerId);
 
 			    if(currentPlayerPoints > adversePlayerPoints)
 			    {
+
+                 battleService.transfertProvince(currentPlayer, adversePlayer);
+
 			    	payload.setMessage("You are The winner ");
 
                     data.put("iswinner", true);
+
                     payload.setData(data);
 
 
 			    }
 			    else
 			    {
+                    battleService.transfertProvince(adversePlayer, currentPlayer);
+
 			    	payload.setMessage("You are Loser ");
 
                     data.put("iswinner", false);
@@ -186,6 +232,29 @@ public class BattleController {
 
 
 }
+
+
+@GetMapping("/ranking")
+  public ResponseEntity<Payload> getRanking() {
+      var payload = new Payload();
+      try {
+          
+        var players = battleService.getRanking();
+
+        payload.setData(players);
+
+
+          payload.setMessage("Get Ranking");
+
+          return new ResponseEntity<>(payload, HttpStatus.OK);
+      } catch (Exception e) {
+          payload.setMessage(e.getMessage());
+          payload.setData(null);
+          return new ResponseEntity<>(payload, HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+  }
+
+
 
 
 

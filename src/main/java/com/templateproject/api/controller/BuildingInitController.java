@@ -41,8 +41,8 @@ public class BuildingInitController {
         this.buildingRepository = buildingRepository;
         
         Building b1 = new Building();
-        b1.setName("b1");
-        b1.setType("t1");
+        b1.setName("Caserne de la garde pr\u00E9torienne");
+        b1.setType("Type 1");
         b1.setStrength(5);
         b1.setWood(5);
         b1.setFood(5);
@@ -58,8 +58,8 @@ public class BuildingInitController {
         buildingRepository.save(b1);
 
         Building b2 = new Building();
-        b2.setName("b2");
-        b2.setType("t2");
+        b2.setName("Caserne des cohortes urbaines");
+        b2.setType("Type 2");
         b1.setStrength(10);
         b2.setWood(10);
         b2.setFood(10);
@@ -75,8 +75,8 @@ public class BuildingInitController {
         buildingRepository.save(b2);
 
         Building b3 = new Building();
-        b3.setName("b3");
-        b3.setType("t3");
+        b3.setName("Caserne des marins de Mis\u00E8ne");
+        b3.setType("Type 3");
         b3.setStrength(15);
         b3.setWood(15);
         b3.setFood(15);

@@ -1,17 +1,22 @@
-# YOUR SPRING API ARCHITECHTURE
+# WILDROME BACK
 
-## Initialization
+## Description
 
-- Clone this repository
-- Create a new Branch
-- With MySQL, create the database following your project name (ex: project_name), make sure to have correct access to it.
-- Duplicate the content from src/main/resources/application.properties into src/main/resources/application-dev.properties (create file, it will be ignored by Git)
-- Remove the line `spring.profiles.active=dev` from application-dev.properties
-- Add all your sensitive Datastore credentials to the application-dev.properties file
-- Add the project informations into the src/main/java/com/templateproject/config/OpenApiConfiguration.java file for Swagger information
+Notre projet consiste à développer un jeu de stratégie sur le thème de la Rome antique.
 
-## Launching the application
+## Stack
 
-- Run the application with the following command: `mvn spring-boot:run`
-- You can now go to http://localhost:8080/swagger-ui.html to see the Swagger UI
-- You are now ready to work !
+- Java
+- Spring
+- Hibernate
+- Mysql
+
+## Pour récupérer le code
+
+- Cloner le dépôt
+
+## Pour lancer le code
+
+- Modifier application.properties
+- Lancer la base de donnée en créant une nouvelle
+- Lancer la commande mvn spring-boot:run dans le terminal

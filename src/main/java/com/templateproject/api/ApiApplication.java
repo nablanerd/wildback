@@ -9,14 +9,19 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.templateproject.api.service.AuthService;
+import com.templateproject.api.service.ProvinceService;
 
 @SpringBootApplication
 public class ApiApplication implements CommandLineRunner{
 
 private AuthService authService;
+    private  ProvinceService provinceservice;
 
-	public ApiApplication(AuthService authService){
+
+	public ApiApplication(AuthService authService, ProvinceService provinceservice){
 this.authService =authService;
+this.provinceservice = provinceservice;
+
 
 	}
 
@@ -28,8 +33,11 @@ this.authService =authService;
 	@Override
 	public void run(String... args) throws Exception {
 
-authService.register("a","a","a","a");
-authService.register("b","b","b","b");
+/* var idPlayer = authService.register("a","a","a","a");
+provinceservice.add("a", idPlayer);
+
+var idPlayer2 = authService.register("b","b","b","b");
+provinceservice.add("b", idPlayer2); */
 
 	}
 	/*@Bean
